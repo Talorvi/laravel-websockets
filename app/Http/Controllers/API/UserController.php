@@ -4,42 +4,35 @@ namespace App\Http\Controllers\API;
 
 use App\Events\NewUser;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreUser;
 use App\User;
-use Illuminate\Support\Facades\Auth;
+use App\Validators\RegisterValidator;
+use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
-    public function register(StoreUser $request)
+    private RegisterValidator $registerValidator;
+    private array $response;
+    private User $user;
+
+    public function register()
     {
-        $validated = $request->validated();
+        $input = request()->all();
+        $this->registerValidator = new RegisterValidator($input);
+        $this->response = $this->registerValidator->validate();
 
-        return response()->json($validated, 200);
+        switch ($this->response['success']){
+            case false:
+                return response()->json($this->response, Response::HTTP_BAD_REQUEST);
+        }
 
-//        if ($validator->fails()) {
-//            return response()->json(['error'=>$validator->errors()], 401);
-//        }
-
-        $input = $request->all();
         $input['password'] = bcrypt($input['password']);
-        $user = User::create($input);
-        $success['token'] =  $user->createToken('WebChat')-> accessToken;
-        $success['name'] =  $user->name;
+        $this->user = User::create($input);
+        $success['token'] =  $this->user->createToken('WebChat')-> accessToken;
+        $success['name'] =  $this->user->name;
 
-        event(new NewUser($user->name));
+        event(new NewUser($this->user->name));
 
-        return response()->json(['success'=>$success], 200);
-    }
-
-    public function login(){
-        if(Auth::attempt(['email' => request('email'), 'password' => request('password')])){
-            $user = Auth::user();
-            $success['token'] =  $user->createToken('WebChat')-> accessToken;
-            return response()->json(['success' => $success], 200);
-        }
-        else{
-            return response()->json(['error'=>'Unauthorised'], 401);
-        }
+        return response()->json(['success'=> true, 'data' => $success], Response::HTTP_OK);
     }
 
     public function test(){

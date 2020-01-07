@@ -29,10 +29,15 @@ class NewMessage implements ShouldBroadcast
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return \Illuminate\Broadcasting\Channel|array
+     * @return Channel
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('testowy');
+        return new Channel('testowy');
+    }
+
+    public function broadcastAs()
+    {
+        return "message-new";
     }
 }

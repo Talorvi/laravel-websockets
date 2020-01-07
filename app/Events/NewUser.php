@@ -29,10 +29,15 @@ class NewUser implements ShouldBroadcast
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return \Illuminate\Broadcasting\Channel|array
+     * @return Channel
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('new-user');
+        return new Channel('new-user');
+    }
+
+    public function broadcastAs()
+    {
+        return "user-new";
     }
 }

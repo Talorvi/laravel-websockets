@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 
 Route::group(['middleware' => 'auth:api'], function(){
     Route::post('test', 'API\UserController@test');
+    Route::post('new-room', 'Api\RoomController@newRoom');
 });
 
 Route::post('login', 'API\UserController@login');
