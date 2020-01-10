@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Events\NewUser;
+use App\Events\User\NewUser;
 use App\Http\Controllers\Controller;
+use App\Room;
 use App\User;
 use App\Validators\RegisterValidator;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
     private RegisterValidator $registerValidator;
     private array $response;
-    private User $user;
 
     public function register()
     {
@@ -26,12 +27,19 @@ class UserController extends Controller
         }
 
         $input['password'] = bcrypt($input['password']);
-        $this->user = User::create($input);
-        $success['token'] =  $this->user->createToken('WebChat')-> accessToken;
-        $success['name'] =  $this->user->name;
+        $user = User::create($input);
+        $success['token'] =  $user->createToken('WebChat')-> accessToken;
+        $success['name'] =  $user->name;
 
-        event(new NewUser($this->user->name));
+        event(new NewUser($user));
 
         return response()->json(['success'=> true, 'data' => $success], Response::HTTP_OK);
     }
+
+//    public function test()
+//    {
+//        $user = Auth::user();
+//        $room = Room::find(request()->input('room_id'));
+//        dd($user->rooms->contains($room));
+//    }
 }

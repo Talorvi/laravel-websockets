@@ -1,43 +1,45 @@
 <?php
 
-namespace App\Events;
+namespace App\Events\Message;
 
-use Illuminate\Broadcasting\Channel;
+use App\Message;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class NewUser implements ShouldBroadcast
+class NewMessage implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public string $userName;
+    public int $userId;
+    public Message $message;
 
     /**
      * Create a new event instance.
      *
-     * @param string $userName
+     * @param int $userId
+     * @param Message $message
      */
-    public function __construct(string $userName)
+    public function __construct(int $userId, Message $message)
     {
-        $this->userName = $userName;
+        $this->userId = $userId;
+        $this->message = $message;
     }
 
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return Channel
+     * @return PresenceChannel
      */
     public function broadcastOn()
     {
-        return new Channel('new-user');
+        return new PresenceChannel('room.'.$this->message->room_id);
     }
 
     public function broadcastAs()
     {
-        return "user-new";
+        return "message-new";
     }
 }

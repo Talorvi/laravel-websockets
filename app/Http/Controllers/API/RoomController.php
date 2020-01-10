@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Events\Room\NewRoom;
 use App\Http\Controllers\Controller;
 use App\Room;
 use App\Validators\NewRoomValidator;
@@ -17,7 +18,6 @@ class RoomController extends Controller
 
     public function index()
     {
-        $input = request()->all();
         $page = request()->input('page');
 
         $user = Auth::user();
@@ -46,6 +46,8 @@ class RoomController extends Controller
         $room->owner_id = $user->id;
         $room->save();
         $room->users()->save($user);
+
+        event(new NewRoom($user->id, $room));
 
         return response()->json(['success'=> true, 'data' => ['code' => $room->code]], Response::HTTP_OK);
     }

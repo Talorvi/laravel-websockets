@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +30,8 @@ Route::group(['middleware' => 'auth:api'], function(){
         Route::delete('delete', 'Api\MessageController@deleteMessage')->name('delete');
         Route::get('list', 'Api\MessageController@index')->name('list');
     });
+
+    //Route::post('test', 'API\UserController@test');
 
 });
 

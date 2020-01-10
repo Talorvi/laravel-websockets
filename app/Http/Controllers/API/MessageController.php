@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Events\Message\NewMessage;
 use App\Http\Controllers\Controller;
 use App\Message;
 use App\Room;
@@ -55,6 +56,8 @@ class MessageController extends Controller
         $message->author_id = $user->id;
 
         $room->messages()->save($message);
+
+        event(new NewMessage($user->id, $message));
 
         return response()->json(['success'=> true, 'data' => ['message' => $message]], Response::HTTP_OK);
     }
