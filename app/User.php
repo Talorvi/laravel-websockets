@@ -40,6 +40,11 @@ class User extends Authenticatable
 
     public function rooms()
     {
-        return $this->hasMany('App\Room');
+        return $this->belongsToMany('App\Room', 'user_room');
+    }
+
+    public function ownedRooms()
+    {
+        return $this->hasMany('App\Room', 'owner_id');
     }
 }

@@ -34,8 +34,4 @@ class UserController extends Controller
 
         return response()->json(['success'=> true, 'data' => $success], Response::HTTP_OK);
     }
-
-    public function test(){
-        return response()->json('test', 200);
-    }
 }
